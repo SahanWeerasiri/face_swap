@@ -9,9 +9,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from telegram import Update, Bot
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackContext
 import tempfile
+from  dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 # Telegram Bot Token (Replace with your actual token)
-TELEGRAM_BOT_TOKEN = "8059382033:AAE7vhMlurBwuu6iNf0K1qnk8f7gzKzg4r0"
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Global variables to store user data
 user_data = {}
