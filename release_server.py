@@ -45,7 +45,7 @@ async def handle_photo(update: Update, context: CallbackContext) -> None:
     
     # Create user directory if it doesn't exist
     if user_id not in user_data:
-        user_dir = os.path.join("output", str(user_id))
+        user_dir = os.path.abspath(os.path.join("output", str(user_id)))
         os.makedirs(user_dir, exist_ok=True)
         user_data[user_id] = {
             'step': 1,
