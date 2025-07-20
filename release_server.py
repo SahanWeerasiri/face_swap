@@ -168,21 +168,8 @@ async def process_face_swap(user_id, bot):
         traceback.print_exc()
     finally:
         # Clean up temporary files
-        if user_id in user_data:
-            temp_dir = user_data[user_id]['temp_dir']
-            if os.path.exists(temp_dir):
-                for filename in os.listdir(temp_dir):
-                    file_path = os.path.join(temp_dir, filename)
-                    try:
-                        if os.path.isfile(file_path):
-                            os.unlink(file_path)
-                    except Exception as e:
-                        print(f"Error deleting file {file_path}: {e}")
-                try:
-                    os.rmdir(temp_dir)
-                except Exception as e:
-                    print(f"Error deleting directory {temp_dir}: {e}")
-            del user_data[user_id]
+        # 
+        pass
 
 async def error_handler(update: Update, context: CallbackContext) -> None:
     """Log errors caused by updates."""
