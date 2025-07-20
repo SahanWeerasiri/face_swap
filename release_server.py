@@ -21,6 +21,16 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 # Global variables to store user data
 user_data = {}
 
+url = "https://deepimg.ai/ai-face-swap/#Generate-box"
+# Initialize driver (UC mode with headless)
+driver = Driver(
+    headless=True,
+    uc=True,
+)
+wait = WebDriverWait(driver, 30)
+driver.uc_open_with_reconnect(url)
+time.sleep(5)
+
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(
         "Welcome to Face Swap Bot!\n"
@@ -35,9 +45,11 @@ async def handle_photo(update: Update, context: CallbackContext) -> None:
     
     # Create user directory if it doesn't exist
     if user_id not in user_data:
+        user_dir = os.path.join("output", str(user_id))
+        os.makedirs(user_dir, exist_ok=True)
         user_data[user_id] = {
             'step': 1,
-            'temp_dir': tempfile.mkdtemp(),
+            'temp_dir': user_dir,
             'chat_id': chat_id
         }
     
@@ -68,6 +80,7 @@ async def handle_photo(update: Update, context: CallbackContext) -> None:
         await process_face_swap(user_id, bot)
 
 async def process_face_swap(user_id, bot):
+    global driver
     try:
         data = user_data[user_id]
         SOURCE_IMAGE_PATH = data['source_image']
@@ -82,24 +95,11 @@ async def process_face_swap(user_id, bot):
             bot.send_message(chat_id, "Error: Target image not found.")
             return
 
-        url = "https://deepimg.ai/ai-face-swap/#Generate-box"
+        
         result_image_path = None
 
         try:
-            # Initialize driver (UC mode with headless)
-            driver = Driver(
-                browser="chrome",
-                headless=True,
-                no_sandbox=True,
-                disable_gpu=True,
-                incognito=True,
-                uc=True,
-            )
-            wait = WebDriverWait(driver, 30)
             await bot.send_message(chat_id, "Starting face swap process... (wait for 2-3 minutes)")
-            driver.open_url(url)
-            time.sleep(5)
-
             # Upload first image
             print(f"Uploading source image from: {SOURCE_IMAGE_PATH}")
             source_input = wait.until(EC.presence_of_element_located(
